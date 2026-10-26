@@ -1,0 +1,208 @@
+<title>Incident Tasks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Affiche A4 portrait, look "ticket" : bandeau, souche perforée, colonnes qui s'empilent sur mobile. Look clair assumé (destiné à l'impression). */
+  :root {
+    --paper: #fbfaf7;
+    --ink: #1b2440;
+    --muted: #5a6280;
+    --line: #d9dbe4;
+    --accent: #e0632a;
+    --accent-soft: #fbe6da;
+    --band: #1b2440;
+    --on-band: #f4f1ea;
+    --p1: #c8322b; --p2: #e0632a; --p3: #2f7a8c; --p4: #7a8099;
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", Consolas, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .sheet { max-width: 820px; margin: 0 auto; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .poster { background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; }
+
+  header { background: var(--band); color: var(--on-band); padding: 28px 32px 24px; display: grid; gap: 10px; }
+  .ref { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(30px, 6vw, 46px); line-height: 1.02; margin: 0; text-wrap: balance; }
+  .lead { margin: 0; font-size: 17px; max-width: 60ch; color: #d7d9e4; }
+  .lead strong { color: var(--on-band); }
+
+  .perf { height: 0; border-top: 2px dashed var(--line); margin: 0 18px; position: relative; }
+  .perf::before, .perf::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line); }
+  .perf::before { left: -29px; } .perf::after { right: -29px; }
+
+  main { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; padding: 26px 32px; }
+  main > section { min-width: 0; display: grid; gap: 14px; align-content: start; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 20px; margin: 0; display: flex; align-items: baseline; gap: 10px; }
+  h2 .tag { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+  ol.reflexes { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: r; }
+  ol.reflexes li { counter-increment: r; display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+  ol.reflexes li::before { content: counter(r); font-family: var(--display); font-weight: 800; font-size: 18px; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 50%; }
+  ol.reflexes b { display: block; }
+  ol.reflexes span { color: var(--muted); font-size: 14px; }
+  .who { display: inline-block; font-style: normal; font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--ink); color: var(--ink); vertical-align: 2px; margin-left: 4px; white-space: nowrap; }
+  .who.all { background: var(--ink); color: #fff; }
+  code { font-family: var(--mono); font-size: .88em; background: #eef0f5; color: var(--ink); padding: 0 4px; border-radius: 3px; white-space: nowrap; }
+  .tool { display: inline-flex; background: #fff; border-radius: 4px; padding: 8px 14px; }
+  .tool svg { height: 20px; width: auto; aspect-ratio: 130.3 / 19.25; display: block; }
+  .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .prio { font-family: var(--mono); font-size: 12px; font-weight: 500; color: #fff; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+  .p1 { background: var(--p1); } .p2 { background: var(--p2); } .p3 { background: var(--p3); } .p4 { background: var(--p4); }
+  td small { display: block; font-size: 12px; color: var(--accent); font-weight: 600; }
+  .steps { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .steps div { background: #eef0f5; border-radius: 4px; padding: 8px 10px; }
+  .steps b { display: block; color: var(--ink); font-size: 14px; }
+  .steps span { color: var(--accent); font-weight: 700; }
+  .how { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 14px; color: var(--muted); }
+  .how b { color: var(--ink); }
+  .why { margin: 0; font-size: 14px; color: var(--muted); background: #eef0f5; border-radius: 4px; padding: 10px 12px; }
+  .why b { color: var(--ink); display: block; }
+  .hold { padding: 0 32px 24px; display: grid; gap: 12px; }
+  .hold-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .hold-grid div { min-width: 0; border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; display: grid; gap: 6px; align-content: start; }
+  .hold-grid code { justify-self: start; font-size: 13px; font-weight: 500; }
+  .hold-grid p { margin: 0; font-size: 14px; color: var(--muted); }
+  .relance { padding: 0 32px 24px; display: grid; gap: 12px; }
+  .relance-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: start; }
+  .relance-grid > * { min-width: 0; }
+  .note { font-size: 13px; color: var(--muted); margin: 0; }
+  .p1rule { margin: 0; display: flex; gap: 10px; align-items: baseline; font-size: 14px; font-weight: 600; border: 1.5px solid var(--p1); border-radius: 4px; padding: 10px 12px; }
+
+  .mandat { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 14px 16px; display: grid; gap: 8px; }
+  .mandat h2 { font-size: 18px; }
+  .mandat ul { margin: 0; padding-left: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 28px; }
+  .mandat-wrap { padding: 0 32px 24px; }
+
+  .techs { border-top: 2px solid var(--ink); margin: 0 32px; padding: 20px 0 22px; display: grid; gap: 12px; }
+  .techs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .techs-grid div { min-width: 0; }
+  .techs-grid b { display: block; font-family: var(--display); font-weight: 600; font-size: 16px; margin-bottom: 2px; }
+  .techs-grid p { margin: 0; font-size: 14px; color: var(--muted); }
+  .motto { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 4px 0 0; }
+  .motto em { font-style: normal; color: var(--accent); }
+
+  footer { background: var(--band); color: var(--on-band); padding: 16px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; font-size: 14px; }
+  footer { align-items: center; }
+  footer .motto { color: var(--on-band); margin: 0; }
+  footer .deleg { margin: 0; max-width: 46ch; color: #b9bdd0; font-size: 13px; }
+  .sign { font-family: var(--mono); font-size: 12px; color: #b9bdd0; display: grid; gap: 6px; min-width: 200px; }
+  .sign span { display: block; border-bottom: 1px solid #6b7290; height: 26px; }
+
+  @media (max-width: 680px) {
+    header, main, footer { padding-left: 20px; padding-right: 20px; }
+    main { grid-template-columns: 1fr; }
+    .techs { margin: 0 20px; }
+    .techs-grid { grid-template-columns: 1fr; }
+    .relance, .mandat-wrap, .hold { padding: 0 20px 20px; }
+    .hold-grid { grid-template-columns: 1fr; }
+    .mandat ul { grid-template-columns: 1fr; }
+    .relance-grid { grid-template-columns: 1fr; }
+  }
+  @media print {
+    @page { size: A4 portrait; margin: 8mm; }
+    body { background: #fff; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet { padding: 0; max-width: none; }
+    .poster { border: none; }
+    .perf::before, .perf::after { display: none; }
+    .poster { zoom: .88; break-inside: avoid; }
+  }
+
+  .route td:first-child { color: var(--ink); }
+  .route td small { color: var(--muted); font-weight: 400; }
+  .route td:last-child { white-space: nowrap; text-align: right; }
+  .tool-chip { display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 3px; border: 1px solid var(--ink); color: var(--ink); }
+  .tool-chip.go { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .route tr.yes td { background: var(--accent-soft); }
+  .route tr.yes td:first-child { font-weight: 600; }
+  .band { padding: 0 32px 24px; display: grid; gap: 12px; }
+  .nots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .nots div { min-width: 0; border-top: 3px solid var(--p1); padding-top: 8px; display: grid; gap: 4px; align-content: start; }
+  .nots b { font-size: 14px; }
+  .nots p { margin: 0; font-size: 13px; color: var(--muted); }
+  .steps3 { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 8px; font-size: 13px; color: var(--muted); }
+  .steps3 div { background: #eef0f5; border-radius: 4px; padding: 10px 12px; }
+  .steps3 b { display: block; color: var(--ink); font-size: 14px; }
+  .steps3 span { color: var(--accent); font-weight: 700; align-self: center; }
+  @media (max-width: 680px) {
+    .band { padding: 0 20px 20px; }
+    .nots { grid-template-columns: 1fr 1fr; }
+    .steps3 { grid-template-columns: 1fr; }
+    .steps3 span { display: none; }
+  }
+</style>
+
+<div class="sheet" lang="fr">
+  <article class="poster">
+    <header>
+      <div class="top">
+        <div class="ref">Guide · Incident Tasks</div>
+        <div class="tool">
+          <svg viewBox="0 0 130.3 19.25" role="img" aria-label="ServiceNow"><g clip-rule="evenodd" fill-rule="evenodd"><g fill="#293e40"><path d="m31.7 5.862c-1.4 0-2.6 0.5-3.6 1.3v-1.1h-3.4v12.9h3.5v-8.2c0.5-0.7 1.7-1.6 3.2-1.6 0.5 0 1 0.1 1.4 0.2v-3.3c-0.4-0.1-0.8-0.2-1.1-0.2"/><path d="m1.6 14.96c0.9 0.8 2.3 1.3 3.5 1.3 0.9 0 1.700-0.5 1.7-1.1 0-2-6.3-1.3-6.3-5.4 0-2.5 2.4-4 4.9-4 1.7 0 3.5 0.6 4.4 1.3l-1.6 2.5c-0.7-0.4-1.5-0.9-2.5-0.9s-1.7 0.4-1.7 1.1c0 1.7 6.3 1 6.3 5.5 0 2.5-2.4 4-5.1 4-1.8 0-3.7-0.6-5.2-1.7z"/><path d="m23.2 12.36c0-3.6-2.5-6.6-6.1-6.6-3.8 0-6.3 3.2-6.3 6.7 0 4.1 2.9 6.7 6.7 6.7 2 0 4-0.8 5.3-2.3l-2-2c-0.6 0.7-1.8 1.5-3.2 1.5-1.8 0-3.3-1.3-3.5-3.1h8.9c0.2-0.2 0.2-0.5 0.2-0.9zm-8.8-1.5c0.2-1.2 1.4-2.3 2.8-2.3s2.4 1.100 2.6 2.3z"/><polygon transform="translate(-.3 -.5379)" points="48.3 6.6 42.4 19.5 40 19.5 34.1 6.6 37.6 6.6 41.2 14.5 44.7 6.6"/><path d="m50.9-0.03788c1.3 0 2.3 1 2.3 2.2 0 1.3-1 2.2-2.3 2.2s-2.2-1-2.2-2.2c0-1.3 0.9-2.2 2.2-2.2"/><rect x="49.2" y="6.062" width="3.5" height="12.9"/><path d="m66.9 16.26c-1.5 2-3.4 2.9-5.8 2.9-4 0-6.9-3-6.9-6.7 0-3.8 3-6.7 6.9-6.7 2.3 0 4.2 1.1 5.4 2.6l-2.3 2.1c-0.7-0.9-1.7-1.5-2.900-1.5-2 0-3.5 1.6-3.5 3.5 0 2 1.4 3.5 3.5 3.5 1.4 0 2.5-0.8 3.1-1.7z"/><path d="m79.4 16.86c-1.3 1.5-3.3 2.3-5.3 2.3-3.8 0-6.7-2.6-6.7-6.7 0-3.600 2.4-6.7 6.3-6.7 3.5 0 6.1 3 6.1 6.6 0 0.4 0 0.7-0.1 1h-9c0.2 1.8 1.7 3.1 3.5 3.1 1.4 0 2.6-0.8 3.2-1.5zm-3.2-6c-0.1-1.1-1.1-2.3-2.6-2.3-1.4 0-2.6 1.1-2.8 2.3z"/><path d="m81.1 18.96v-12.9h3.3v1.1c1-0.8 2.2-1.3 3.6-1.3 1.8 0 3.4 0.8 4.5 2.1 0.8 1 1.4 2.3 1.4 4.5v6.6h-3.5v-6.9c0-1.3-0.3-2-0.8-2.4-0.5-0.5-1.1-0.8-2-0.8-1.4 0-2.6 0.9-3.2 1.6v8.4h-3.3z"/></g><path d="m102.8 5.762c-4.2 0-7.5 3.3-7.5 7.5 0 2.2 0.9 4.2 2.3 5.6 0.5 0.5 1.4 0.5 2 0.1 0.8-0.7 2-1.1 3.2-1.1 1.3 0 2.3 0.4 3.2 1.1 0.6 0.5 1.4 0.4 2-0.2 1.4-1.4 2.3-3.3 2.3-5.5-0.1-4.1-3.4-7.5-7.5-7.5m-0.1 11.4c-2.3 0-3.8-1.7-3.8-3.8s1.5-3.8 3.8-3.8 3.8 1.7 3.8 3.8-1.5 3.8-3.8 3.8" fill="#81b5a1"/><polygon transform="translate(-.3 -.5379)" points="109.7 6.6 113.1 6.6 115.9 14 118.7 6.6 121.6 6.6 124.3 14 127.1 6.6 130.6 6.6 125.5 19.5 122.9 19.5 120.1 12.2 117.4 19.5 114.8 19.5" fill="#293e40"/></g></svg>
+        </div>
+      </div>
+      <h1>Une Task, une action, un service.</h1>
+      <p class="lead">Une <strong>Incident Task</strong> demande à un autre service <strong>une action précise</strong> pour résoudre un incident. L'incident, lui, reste à vous.</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Task ou autre chose ? <span class="tag">avant de créer</span></h2>
+        <table class="route">
+          <thead><tr><th>Situation</th><th></th></tr></thead>
+          <tbody>
+            <tr class="yes"><td>Un autre service doit faire une action précise, sans approbation, et l'incident reste chez moi<small>ex. vérifier les logs d'un switch, intervenir sur site</small></td><td><span class="tool-chip go">Incident Task</span></td></tr>
+            <tr class=""><td>Tout l'incident relève d'un autre service<small>ex. l'application est gérée par une autre équipe</small></td><td><span class="tool-chip">Réassigner</span></td></tr>
+            <tr class=""><td>L'action modifie la production ou demande une approbation<small>ex. ouvrir un flux firewall, changer une configuration serveur</small></td><td><span class="tool-chip">Change</span></td></tr>
+            <tr class=""><td>L'utilisateur demande quelque chose de nouveau<small>ex. accès à un dossier, nouveau matériel</small></td><td><span class="tool-chip">RITM</span></td></tr>
+            <tr class=""><td>J'ai juste une question ou une info à demander</td><td><span class="tool-chip">@ Work notes</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Une bonne Task <span class="tag">à la création</span></h2>
+        <ol class="reflexes">
+          <li><div><b>Une action, un service</b><span>Une Task = une action pour un seul groupe. Deux actions ou deux groupes : deux Tasks.</span></div></li>
+          <li><div><b>Le bon groupe</b><span>Vérifier le groupe d'assignation avant d'envoyer : une Task mal routée part en ping-pong.</span></div></li>
+          <li><div><b>Un titre qui dit l'action</b><span>« Vérifier les logs du switch SW-03 », pas « Problème réseau ».</span></div></li>
+          <li><div><b>Un contexte qui suffit</b><span>Symptôme, ce qui a déjà été fait, ce qu'on attend. Personne ne doit relire tout l'incident.</span></div></li>
+          <li><div><b>Un résultat attendu</b><span>Dire quand la Task est terminée : quelle info ou quel état on attend en retour.</span></div></li>
+          <li><div><b>La bonne priorité</b><span>Celle de l'impact de l'incident, pas plus haute pour passer devant.</span></div></li>
+        </ol>
+      </section>
+    </main>
+
+    <section class="band">
+      <h2>Ce n'est pas une Task</h2>
+      <div class="nots">
+        <div><b>Pour informer</b><p>Un service n'a rien à faire ? Un @ ou un message Teams suffit.</p></div>
+        <div><b>Pour se débarrasser de l'incident</b><p>Si tout le problème est chez eux, on réassigne l'incident.</p></div>
+        <div><b>Pour une action à approuver</b><p>Modification de la production ou approbation nécessaire : c'est un Change.</p></div>
+        <div><b>Pour découper son propre travail</b><p>Ses propres étapes se notent dans les Work notes.</p></div>
+      </div>
+    </section>
+
+    <section class="band">
+      <h2>Après la création</h2>
+      <div class="steps3">
+          <div><b>Vous restez propriétaire</b>L'incident et son suivi restent à vous.</div>
+          <span aria-hidden="true">→</span>
+          <div><b>Suivez la Task</b>Mêmes règles de relance que pour un ticket.</div>
+          <span aria-hidden="true">→</span>
+          <div><b>Fermez avant de résoudre</b>Toutes les Tasks sont fermées avant de résoudre l'incident.</div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="motto">Une Task délègue <em>une action,</em> pas l'incident.</p>
+      <p class="deleg">Un doute entre Task, Change ou RITM ? Demandez à votre responsable d'équipe avant de créer.</p>
+    </footer>
+  </article>
+</div>
